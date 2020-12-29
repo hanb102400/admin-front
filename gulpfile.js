@@ -59,7 +59,7 @@ function server(cb) {
         path: '/',
         host: '127.0.0.1',
         port: '1357',
-        livereload: false, //自动刷新
+        livereload: true, //自动刷新
         direactoryListing: true, //指定目录找到
         open: true //自动打开
     }));
