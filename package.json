@@ -9,6 +9,7 @@
   "author": "shawn",
   "license": "ISC",
   "dependencies": {
+    "delete": "^1.1.0",
     "vue": "^2.6.12"
   },
   "devDependencies": {

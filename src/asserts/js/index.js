@@ -9,12 +9,16 @@ const Bar = { template: '<div>bar</div>' }
 // 我们晚点再讨论嵌套路由。
 const routes = [{
         path: '/foo',
-        component: () => {
-            //var template = gmallComponent('/module/foo/foo.html');
-            return getVueJs('/module/foo/foo.js');
-        }
+        component: Foo
     },
-    { path: '/bar', component: Bar }
+    {
+        path: '/table',
+        component: httpVueLoader('/module/table.vue')
+    },
+    {
+        path: '/form',
+        component: httpVueLoader('/module/form.vue')
+    }
 ]
 
 // 3. 创建 router 实例，然后传 `routes` 配置
@@ -22,6 +26,7 @@ const routes = [{
 const router = new VueRouter({
     routes // (缩写) 相当于 routes: routes
 })
+
 
 // 4. 创建和挂载根实例。
 // 记得要通过 router 配置参数注入路由，

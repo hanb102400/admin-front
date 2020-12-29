@@ -148,7 +148,8 @@ body {
     color: #dcdcdc;
 }
 
-.sidebar .main-menu>li>a>span {
+.sidebar .main-menu>li>a>span,
+.sidebar .main-menu>li>a>.menu-link {
     opacity: 1;
     visibility: visible;
     position: absolute;
@@ -189,11 +190,13 @@ body {
     padding-left: 30px;
 }
 
-.sidebar .sub-menu>li>a>span {
+.sidebar .sub-menu>li>a>span,
+.sidebar .sub-menu>li>a>.menu-link {
     display: block;
 }
 
-.sidebar .sub-menu>li>a>span:before {
+.sidebar .sub-menu>li>a>span:before,
+.sidebar .sub-menu>li>a>.menu-link:before {
     position: relative;
     left: 0;
     top: 0;
@@ -212,6 +215,8 @@ body {
 }
 
 .sidebar .sub-menu>li.active>a>span:before,
-.sidebar .sub-menu>li:hover>a>span:before {
+.sidebar .sub-menu>li:hover>a>span:before,
+.sidebar .sub-menu>li.active>a>.menu-link:before,
+.sidebar .sub-menu>li:hover>a>.menu-link:before {
     color: #fe8a7d!important;
 }
