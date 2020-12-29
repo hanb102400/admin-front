@@ -7,6 +7,7 @@ const Bar = { template: '<div>bar</div>' }
 // 通过 Vue.extend() 创建的组件构造器，
 // 或者，只是一个组件配置对象。
 // 我们晚点再讨论嵌套路由。
+
 const routes = [{
         path: '/foo',
         component: Foo
