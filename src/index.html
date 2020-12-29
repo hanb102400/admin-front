@@ -67,15 +67,20 @@
                         <li class="active expand">
                             <a href="#">
                                 <i class="fa fa-bars"></i>
-                                <span> 表格</span>
+                                <span> 常用组件</span>
                             </a>
                             <ul class="nav sub-menu">
                                 <li class="">
-                                    <a href="workorder_list.html">
+                                    <router-link to="/table">
                                         <span> 表格</span>
-                                    </a>
+                                    </router-link>
                                 </li>
-                        
+                                <li class="sub-menu">
+                                    <router-link to="/form">
+                                        <span> 表单</span>
+                                    </router-link>
+                                </li>
+
                             </ul>
                         </li>
                         <li>
@@ -84,21 +89,17 @@
                                 <span> 表单</span>
                             </a>
                             <ul class="nav sub-menu">
-                                <li class="sub-menu">
-                                    <a href="tables.html">
-                                        <span>表单</span>
-                                    </a>
-                                </li>
-                              
+
+
                             </ul>
                         </li>
-                      
+
                         <li>
-                          <a href="#">
+                            <a href="#">
                                 <i class="fa fa-university"></i>
                                 <span>文件</span>
                             </a>
-                     
+
                             <ul class="nav sub-menu">
                                 <li class="active">
                                     <a href="email-inbox.html ">
@@ -133,7 +134,14 @@
         </div>
     </div>
     <script src="/lib/vue@2.6.12/vue.js"></script>
-    <script src="/lib/vue@2.6.12/vue-router.js"></script>
+    <script src="/lib/vue-router@3.4.9/vue-router.js"></script>
+    <script src="/lib/http-vue-loader@1.4.2/httpVueLoader.js"></script>
+
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
     <script src="/lib/axios.min.js"></script>
     <script type="module" src="./asserts/js/index.js "></script>
 
