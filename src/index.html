@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Admin</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="#" />
+    <meta name="keywords" content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app" />
+    <meta name="author" content="#" />
+    <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon" />
+
+    <link rel="stylesheet" type="text/css" href="./lib/bootstrap-5.0.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="./lib/font-awesome-4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="./asserts/css/admin.css" />
+</head>
+
+<body>
+    <div id="app">
+        <div class="header">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <div class="navbar-wrapper">
+                    <div class="navbar-brand" logo-theme="theme1"></div>
+                </div>
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="#">常用功能</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">系统配置</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" tabindex="-1">Disabled</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="main-container-wrapper">
+            <div class="sidebar">
+                <!-- Start .sidebar-inner -->
+                <div class="sidebar-inner">
+                    <!-- Start #sideNav -->
+                    <div class="sidebar-navigation">导航菜单1</div>
+                    <ul id="sideNav" class="nav nav-pills nav-stacked main-menu">
+                        <li class="active">
+                            <a href="#">
+                                <i class="fa fa-home"></i>
+                                <span> 首页</span>
+                            </a>
+                            <ul class="nav sub-menu">
+                                <li class="active">
+                                    <a href="main.html">
+                                        <span> 首页</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="active expand">
+                            <a href="#">
+                                <i class="fa fa-bars"></i>
+                                <span> 表格</span>
+                            </a>
+                            <ul class="nav sub-menu">
+                                <li class="">
+                                    <a href="workorder_list.html">
+                                        <span> 表格</span>
+                                    </a>
+                                </li>
+                        
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-university"></i>
+                                <span> 表单</span>
+                            </a>
+                            <ul class="nav sub-menu">
+                                <li class="sub-menu">
+                                    <a href="tables.html">
+                                        <span>表单</span>
+                                    </a>
+                                </li>
+                              
+                            </ul>
+                        </li>
+                      
+                        <li>
+                          <a href="#">
+                                <i class="fa fa-university"></i>
+                                <span>文件</span>
+                            </a>
+                     
+                            <ul class="nav sub-menu">
+                                <li class="active">
+                                    <a href="email-inbox.html ">
+                                        <i class="ec-archive"></i> Inbox</a>
+                                </li>
+                                <li>
+                                    <a href="email-read.html">
+                                        <i class="br-eye"></i> Read email</a>
+                                </li>
+                                <li>
+                                    <a href="email-write.html">
+                                        <i class="ec-pencil2"></i> Write email</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <!-- End #sideNav -->
+                    <!-- Start .sidebar-panel -->
+                    <div class="sidebar-panel"></div>
+                    <!-- End .sidebar-panel -->
+                </div>
+                <!-- End .sidebar-inner -->
+            </div>
+
+            <div class="content-wrapper">
+                <div class="content-inner">
+                    <router-view></router-view>
+                    <!-- <iframe id="mainFrame" name="mainFrame" src="main.html" frameborder="0" seamless></iframe> -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script src="/lib/vue@2.6.12/vue.js"></script>
+    <script src="/lib/vue@2.6.12/vue-router.js"></script>
+    <script src="/lib/axios.min.js"></script>
+    <script type="module" src="./asserts/js/index.js "></script>
+
+</body>
+
+</html>
