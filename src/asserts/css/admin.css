@@ -4,12 +4,21 @@ body {
     font-family: '微软雅黑', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+.header {
+    min-height: 56px;
+    padding: 0;
+}
+
 .header>.navbar {
     background: #fff;
     color: #404E67;
     padding: 0;
     -webkit-box-shadow: 0 0 11px rgba(0, 0, 0, .13);
     box-shadow: 0 0 11px rgba(0, 0, 0, .13);
+    position: fixed;
+    display: block;
+    width: 100%;
+    z-index: 1028;
 }
 
 .navbar-wrapper .navbar-brand {
@@ -21,13 +30,59 @@ body {
     display: -ms-flexbox;
     display: flex;
     float: left;
-    height: 56px;
+    height: 36px;
     text-align: center;
     text-transform: uppercase;
-    width: 230px;
+    width: 210px;
     padding: 10px;
     background-color: #404E67;
-    color: #fff;
+    color: #dcdcdc;
+    text-shadow: 3px 3px 3px #f8bab0;
+    letter-spacing: 5px;
+}
+
+.navbar .container-fluid {
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 15px;
+    padding-left: 15px;
+    width: 100%;
+}
+
+.navbar-nav {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.nav-left li.nav-item {
+    float: left;
+    padding: 0 10px;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+.nav-left li.nav-item a {
+    color: #404E67;
+    display: inline-block;
+    padding: 0 10px;
+    margin: 0 10px;
+    line-height: 56px;
+    cursor: pointer;
+    text-decoration: none;
+    position: relative;
+}
+
+.nav-left li.nav-item.active a:after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #409eff;
 }
 
 .main-container-wrapper {
@@ -49,6 +104,7 @@ body {
 
 .content-inner {
     height: calc(100vh - 76px);
+    background: #fff;
 }
 
 .content-inner iframe {
@@ -209,9 +265,33 @@ body {
 .sidebar .sub-menu>li.active>a,
 .sidebar .sub-menu>li:hover>a {
     color: #fe8a7d!important;
+    font-weight: 600;
 }
 
 .sidebar .sub-menu>li.active>a>span:before,
 .sidebar .sub-menu>li:hover>a>span:before {
     color: #fe8a7d!important;
+    font-weight: 600;
+}
+
+.query-form {
+    /* margin-top: 20px; */
+    padding-top: 25px;
+    background-color: #f2f2f2;
+}
+
+.table,
+.form {
+    margin-top: 30px;
+}
+
+.pagination {
+    text-align: right;
+    background: #fff;
+    padding-right: 30px;
+}
+
+.breadcrumb {
+    padding: 10px 10px 10px 10px;
+    border-bottom: 1px solid #DCDFE6;
 }

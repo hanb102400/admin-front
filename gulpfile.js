@@ -4,9 +4,13 @@ const webserver = require('gulp-webserver');
 const del = require('delete');
 
 function copyHtml() {
-    src('src/**/*.vue')
-        .pipe(dest('dist/'));
+
     return src('src/**/*.html')
+        .pipe(dest('dist/'));
+}
+
+function copyVue() {
+    return src('src/**/*.vue')
         .pipe(dest('dist/'));
 }
 
@@ -38,6 +42,7 @@ function clean(cb) {
 
 function build(cb) {
     copyHtml();
+    copyVue();
     copyCss();
     copyJs();
     copyRes();
@@ -45,6 +50,7 @@ function build(cb) {
 }
 
 watch('src/**/*.html', copyHtml);
+watch('src/**/*.vue', copyVue);
 watch('src/**/*.js', copyJs);
 watch('src/**/*.css', copyCss);
 
