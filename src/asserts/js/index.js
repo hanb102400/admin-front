@@ -35,3 +35,34 @@ const router = new VueRouter({
 const app = new Vue({
     router
 }).$mount('#app')
+
+
+/** net **/
+//设置baseurl
+//axios.defaults.baseURL = 'http://127.0.0.1/';
+//设置超时时间
+axios.defaults.timeout = 10000;
+
+var Net = {}
+
+//封装get方法
+Net.get = function(url, params) {
+    return new Promise((resolve, reject) => {
+        axios.get(url, params).then(resp => {
+            resolve(resp.data);
+        }).catch(err => {
+            reject(err.data);
+        })
+    });
+}
+
+// 封装post方法
+Net.post = function(url, params) {
+    return new Promise((resolve, reject) => {
+        axios.post(url, params).then(resp => {
+            resolve(resp.data);
+        }).catch(err => {
+            reject(err.data);
+        })
+    });
+}

@@ -1,7 +1,15 @@
+loadScript('/mock/mockjs/mock.js', function() {
+
+    //加载mock配置文件
+    loadScript('/mock/user.js');
+})
+
+
 function loadScript(src, callback) {
     var script = document.createElement('script'),
         head = document.getElementsByTagName('head')[0];
     script.type = 'text/javascript';
+    script.async = false;
     script.src = src;
     if (script.addEventListener) {
         script.addEventListener('load', function() {
@@ -17,7 +25,3 @@ function loadScript(src, callback) {
     }
     head.appendChild(script);
 }
-
-//loadScript('/mock/mockjs/mock.js', function() {
-//    loadScript('/mock/user.js');
-//})

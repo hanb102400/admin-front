@@ -295,3 +295,11 @@ body {
     padding: 10px 10px 10px 10px;
     border-bottom: 1px solid #DCDFE6;
 }
+
+.pagination .el-pagination__total {
+    float: left;
+}
+
+.pagination .el-pagination__sizes {
+    float: left;
+}

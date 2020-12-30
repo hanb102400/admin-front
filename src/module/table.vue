@@ -30,7 +30,7 @@
             </template>
         </el-table-column>
     </el-table>
-    <el-pagination class="pagination" @size-change="handleSizeChange" @current-change="handleCurrentChange" layout="prev, pager, next" :page-size="10" :page-sizes="[5, 10, 15, 20]" :current-page="pageNo" :total="totalCount">
+    <el-pagination background class="pagination" @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="[15, 20, 30, 50]" :page-size="10" layout="total, sizes, prev, pager, next, jumper" :current-page="pageNo" :total="totalCount">
     </el-pagination>
 </div>
 </template>
@@ -45,23 +45,13 @@ module.exports = {
             this.currentPage = currentPage;
             this.handleTableData(currentPage);
         },
-        handleTableData(pageNo) {
+        async handleTableData(pageNo) {
             var that = this;
             var params = {
                 "page": pageNo
             };
-            axios.get('/user/list?page=' + pageNo) //"url"处填写后台的接口
-                .then(resp => {
-                    var re = resp.data
-                    console.log("this.tableData", re)
-                    if (re && re.code == 0) {
-                        console.log("this.tableData", this.tableData)
-                        this.tableData = re.data;
-                    }
-                }).catch(error => { // 请求失败
-                    console.log('请求失败');
-                    console.log(error);
-                })
+            const resp = await axios.get('/user/list?page=' + pageNo) //"url"处填写后台的接口
+            this.tableData = resp.data.data;
         }
     },
     data() {
