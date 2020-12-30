@@ -44,9 +44,10 @@
             <el-input type="textarea" v-model="form.desc"></el-input>
         </el-form-item>
         <el-form-item label="上传商家图片">
-            <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" multiple :limit="3" :on-exceed="handleExceed" :file-list="fileList">
+            <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" 
+            :on-remove="handleRemove" :before-remove="beforeRemove" multiple :limit="1" :on-exceed="handleExceed" :on-success="handleUploadSuccess" :before-upload="handleBeforeUpload" :file-list="fileList">
                 <el-button size="small" type="primary">点击上传</el-button>
-                <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2MB</div>
             </el-upload>
         </el-form-item>
         <el-form-item>
@@ -76,7 +77,23 @@ module.exports = {
     methods: {
         onSubmit() {
             console.log('submit!');
+        },
+        handleUploadSuccess(res, file) {
+          this.$message.success('图片上传成功');
+        },
+        handleBeforeUpload(file) {
+            const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isJPG) {
+                this.$message.error('上传头像图片只能是 JPG 格式!');
+            }
+            if (!isLt2M) {
+                this.$message.error('上传头像图片大小不能超过 2MB!');
+            }
+            return isJPG && isLt2M;
         }
+
     }
 }
 </script>
