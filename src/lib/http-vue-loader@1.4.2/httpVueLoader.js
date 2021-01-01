@@ -1,478 +1,479 @@
-(function umd(root,factory){
-	if(typeof module==='object' && typeof exports === 'object' )
-		module.exports=factory()
-	else if(typeof define==='function' && define.amd)
-		define([],factory)
-	else
-		root.httpVueLoader=factory()
-})(this,function factory() {
-	'use strict';
+(function umd(root, factory) { //umd
+    if (typeof module === 'object' && typeof exports === 'object')
+        module.exports = factory()
+    else if (typeof define === 'function' && define.amd) //amd
+        define([], factory)
+    else
+        root.httpVueLoader = factory()
 
-	var scopeIndex = 0;
+})(this, function factory() {
+    'use strict';
 
-	StyleContext.prototype = {
+    var scopeIndex = 0;
 
-		withBase: function(callback) {
+    StyleContext.prototype = {
 
-			var tmpBaseElt;
-			if ( this.component.baseURI ) {
+        withBase: function(callback) {
 
-				// firefox and chrome need the <base> to be set while inserting or modifying <style> in a document.
-				tmpBaseElt = document.createElement('base');
-				tmpBaseElt.href = this.component.baseURI;
+            var tmpBaseElt;
+            if (this.component.baseURI) {
 
-				var headElt = this.component.getHead();
-				headElt.insertBefore(tmpBaseElt, headElt.firstChild);
-			}
+                // firefox and chrome need the <base> to be set while inserting or modifying <style> in a document.
+                tmpBaseElt = document.createElement('base');
+                tmpBaseElt.href = this.component.baseURI;
 
-			callback.call(this);
+                var headElt = this.component.getHead();
+                headElt.insertBefore(tmpBaseElt, headElt.firstChild);
+            }
 
-			if ( tmpBaseElt )
-				this.component.getHead().removeChild(tmpBaseElt);
-		},
+            callback.call(this);
 
-		scopeStyles: function(styleElt, scopeName) {
+            if (tmpBaseElt)
+                this.component.getHead().removeChild(tmpBaseElt);
+        },
 
-			function process() {
+        scopeStyles: function(styleElt, scopeName) {
 
-				var sheet = styleElt.sheet;
-				var rules = sheet.cssRules;
+            function process() {
 
-				for ( var i = 0; i < rules.length; ++i ) {
+                var sheet = styleElt.sheet;
+                var rules = sheet.cssRules;
 
-					var rule = rules[i];
-					if ( rule.type !== 1 )
-						continue;
+                for (var i = 0; i < rules.length; ++i) {
 
-					var scopedSelectors = [];
+                    var rule = rules[i];
+                    if (rule.type !== 1)
+                        continue;
 
-					rule.selectorText.split(/\s*,\s*/).forEach(function(sel) {
+                    var scopedSelectors = [];
 
-						scopedSelectors.push(scopeName+' '+sel);
-						var segments = sel.match(/([^ :]+)(.+)?/);
-						scopedSelectors.push(segments[1] + scopeName + (segments[2]||''));
-					});
+                    rule.selectorText.split(/\s*,\s*/).forEach(function(sel) {
 
-					var scopedRule = scopedSelectors.join(',') + rule.cssText.substr(rule.selectorText.length);
-					sheet.deleteRule(i);
-					sheet.insertRule(scopedRule, i);
-				}
-			}
+                        scopedSelectors.push(scopeName + ' ' + sel);
+                        var segments = sel.match(/([^ :]+)(.+)?/);
+                        scopedSelectors.push(segments[1] + scopeName + (segments[2] || ''));
+                    });
 
-			try {
-				// firefox may fail sheet.cssRules with InvalidAccessError
-				process();
-			} catch (ex) {
+                    var scopedRule = scopedSelectors.join(',') + rule.cssText.substr(rule.selectorText.length);
+                    sheet.deleteRule(i);
+                    sheet.insertRule(scopedRule, i);
+                }
+            }
 
-				if ( ex instanceof DOMException && ex.code === DOMException.INVALID_ACCESS_ERR ) {
+            try {
+                // firefox may fail sheet.cssRules with InvalidAccessError
+                process();
+            } catch (ex) {
 
-					styleElt.sheet.disabled = true;
-					styleElt.addEventListener('load', function onStyleLoaded() {
+                if (ex instanceof DOMException && ex.code === DOMException.INVALID_ACCESS_ERR) {
 
-						styleElt.removeEventListener('load', onStyleLoaded);
+                    styleElt.sheet.disabled = true;
+                    styleElt.addEventListener('load', function onStyleLoaded() {
 
-						// firefox need this timeout otherwise we have to use document.importNode(style, true)
-						setTimeout(function() {
+                        styleElt.removeEventListener('load', onStyleLoaded);
 
-							process();
-							styleElt.sheet.disabled = false;
-						});
-					});
-					return;
-				}
+                        // firefox need this timeout otherwise we have to use document.importNode(style, true)
+                        setTimeout(function() {
 
-				throw ex;
-			}
-		},
+                            process();
+                            styleElt.sheet.disabled = false;
+                        });
+                    });
+                    return;
+                }
 
-		compile: function() {
+                throw ex;
+            }
+        },
 
-			var hasTemplate = this.template !== null;
+        compile: function() {
 
-			var scoped = this.elt.hasAttribute('scoped');
+            var hasTemplate = this.template !== null;
 
-			if ( scoped ) {
+            var scoped = this.elt.hasAttribute('scoped');
 
-				// no template, no scopable style needed
-				if ( !hasTemplate )
-					return;
+            if (scoped) {
 
-				// firefox does not tolerate this attribute
-				this.elt.removeAttribute('scoped');
-			}
+                // no template, no scopable style needed
+                if (!hasTemplate)
+                    return;
 
-			this.withBase(function() {
+                // firefox does not tolerate this attribute
+                this.elt.removeAttribute('scoped');
+            }
 
-				this.component.getHead().appendChild(this.elt);
-			});
+            this.withBase(function() {
 
-			if ( scoped )
-				this.scopeStyles(this.elt, '['+this.component.getScopeId()+']');
+                this.component.getHead().appendChild(this.elt);
+            });
 
-			return Promise.resolve();
-		},
+            if (scoped)
+                this.scopeStyles(this.elt, '[' + this.component.getScopeId() + ']');
 
-		getContent: function() {
+            return Promise.resolve();
+        },
 
-			return this.elt.textContent;
-		},
+        getContent: function() {
 
-		setContent: function(content) {
+            return this.elt.textContent;
+        },
 
-			this.withBase(function() {
+        setContent: function(content) {
 
-				this.elt.textContent = content;
-			});
-		}
-	};
+            this.withBase(function() {
 
-	function StyleContext(component, elt) {
+                this.elt.textContent = content;
+            });
+        }
+    };
 
-		this.component = component;
-		this.elt = elt;
-	}
+    function StyleContext(component, elt) {
 
+        this.component = component;
+        this.elt = elt;
+    }
 
-	ScriptContext.prototype = {
 
-		getContent: function() {
+    ScriptContext.prototype = {
 
-			return this.elt.textContent;
-		},
+        getContent: function() {
 
-		setContent: function(content) {
+            return this.elt.textContent;
+        },
 
-			this.elt.textContent = content;
-		},
+        setContent: function(content) {
 
-		compile: function(module) {
+            this.elt.textContent = content;
+        },
 
-			var childModuleRequire = function(childURL) {
+        compile: function(module) {
 
-				return httpVueLoader.require(resolveURL(this.component.baseURI, childURL));
-			}.bind(this);
+            var childModuleRequire = function(childURL) {
 
-			var childLoader = function(childURL, childName) {
+                return httpVueLoader.require(resolveURL(this.component.baseURI, childURL));
+            }.bind(this);
 
-				return httpVueLoader(resolveURL(this.component.baseURI, childURL), childName);
-			}.bind(this);
+            var childLoader = function(childURL, childName) {
 
-			try {
-				Function('exports', 'require', 'httpVueLoader', 'module', this.getContent()).call(this.module.exports, this.module.exports, childModuleRequire, childLoader, this.module);
-			} catch(ex) {
+                return httpVueLoader(resolveURL(this.component.baseURI, childURL), childName);
+            }.bind(this);
 
-				if ( !('lineNumber' in ex) ) {
+            try {
+                Function('exports', 'require', 'httpVueLoader', 'module', this.getContent()).call(this.module.exports, this.module.exports, childModuleRequire, childLoader, this.module);
+            } catch (ex) {
 
-					return Promise.reject(ex);
-				}
-				var vueFileData = responseText.replace(/\r?\n/g, '\n');
-				var lineNumber = vueFileData.substr(0, vueFileData.indexOf(script)).split('\n').length + ex.lineNumber - 1;
-				throw new (ex.constructor)(ex.message, url, lineNumber);
-			}
+                if (!('lineNumber' in ex)) {
 
-			return Promise.resolve(this.module.exports)
-			.then(httpVueLoader.scriptExportsHandler.bind(this))
-			.then(function(exports) {
+                    return Promise.reject(ex);
+                }
+                var vueFileData = responseText.replace(/\r?\n/g, '\n');
+                var lineNumber = vueFileData.substr(0, vueFileData.indexOf(script)).split('\n').length + ex.lineNumber - 1;
+                throw new(ex.constructor)(ex.message, url, lineNumber);
+            }
 
-				this.module.exports = exports;
-			}.bind(this));
-		}
-	};
+            return Promise.resolve(this.module.exports)
+                .then(httpVueLoader.scriptExportsHandler.bind(this))
+                .then(function(exports) {
 
-	function ScriptContext(component, elt) {
+                    this.module.exports = exports;
+                }.bind(this));
+        }
+    };
 
-		this.component = component;
-		this.elt = elt;
-		this.module = { exports:{} };
-	}
+    function ScriptContext(component, elt) {
 
+        this.component = component;
+        this.elt = elt;
+        this.module = { exports: {} };
+    }
 
-	TemplateContext.prototype = {
 
-		getContent: function() {
+    TemplateContext.prototype = {
 
-			return this.elt.innerHTML;
-		},
+        getContent: function() {
 
-		setContent: function(content) {
+            return this.elt.innerHTML;
+        },
 
-			this.elt.innerHTML = content;
-		},
+        setContent: function(content) {
 
-		getRootElt: function() {
+            this.elt.innerHTML = content;
+        },
 
-			var tplElt = this.elt.content || this.elt;
+        getRootElt: function() {
 
-			if ( 'firstElementChild' in tplElt )
-				return tplElt.firstElementChild;
+            var tplElt = this.elt.content || this.elt;
 
-			for ( tplElt = tplElt.firstChild; tplElt !== null; tplElt = tplElt.nextSibling )
-				if ( tplElt.nodeType === Node.ELEMENT_NODE )
-					return tplElt;
+            if ('firstElementChild' in tplElt)
+                return tplElt.firstElementChild;
 
-			return null;
-		},
+            for (tplElt = tplElt.firstChild; tplElt !== null; tplElt = tplElt.nextSibling)
+                if (tplElt.nodeType === Node.ELEMENT_NODE)
+                    return tplElt;
 
-		compile: function() {
+            return null;
+        },
 
-			return Promise.resolve();
-		}
-	};
+        compile: function() {
 
-	function TemplateContext(component, elt) {
+            return Promise.resolve();
+        }
+    };
 
-		this.component = component;
-		this.elt = elt;
-	}
+    function TemplateContext(component, elt) {
 
+        this.component = component;
+        this.elt = elt;
+    }
 
 
-	Component.prototype = {
 
-		getHead: function() {
+    Component.prototype = {
 
-			return document.head || document.getElementsByTagName('head')[0];
-		},
+        getHead: function() {
 
-		getScopeId: function() {
+            return document.head || document.getElementsByTagName('head')[0];
+        },
 
-			if ( this._scopeId === '' ) {
+        getScopeId: function() {
 
-				this._scopeId = 'data-s-' + (scopeIndex++).toString(36);
-				this.template.getRootElt().setAttribute(this._scopeId, '');
-			}
-			return this._scopeId;
-		},
+            if (this._scopeId === '') {
 
-		load: function(componentURL) {
+                this._scopeId = 'data-s-' + (scopeIndex++).toString(36);
+                this.template.getRootElt().setAttribute(this._scopeId, '');
+            }
+            return this._scopeId;
+        },
 
-			return httpVueLoader.httpRequest(componentURL)
-			.then(function(responseText) {
+        load: function(componentURL) {
 
-				this.baseURI = componentURL.substr(0, componentURL.lastIndexOf('/')+1);
-				var doc = document.implementation.createHTMLDocument('');
+            return httpVueLoader.httpRequest(componentURL)
+                .then(function(responseText) {
 
-				// IE requires the <base> to come with <style>
-				doc.body.innerHTML = (this.baseURI ? '<base href="'+this.baseURI+'">' : '') + responseText;
+                    this.baseURI = componentURL.substr(0, componentURL.lastIndexOf('/') + 1);
+                    var doc = document.implementation.createHTMLDocument('');
 
-				for ( var it = doc.body.firstChild; it; it = it.nextSibling ) {
+                    // IE requires the <base> to come with <style>
+                    doc.body.innerHTML = (this.baseURI ? '<base href="' + this.baseURI + '">' : '') + responseText;
 
-					switch ( it.nodeName ) {
-						case 'TEMPLATE':
-							this.template = new TemplateContext(this, it);
-							break;
-						case 'SCRIPT':
-							this.script = new ScriptContext(this, it);
-							break;
-						case 'STYLE':
-							this.styles.push(new StyleContext(this, it));
-							break;
-					}
-				}
+                    for (var it = doc.body.firstChild; it; it = it.nextSibling) {
 
-				return this;
-			}.bind(this));
-		},
+                        switch (it.nodeName) {
+                            case 'TEMPLATE':
+                                this.template = new TemplateContext(this, it);
+                                break;
+                            case 'SCRIPT':
+                                this.script = new ScriptContext(this, it);
+                                break;
+                            case 'STYLE':
+                                this.styles.push(new StyleContext(this, it));
+                                break;
+                        }
+                    }
 
-		_normalizeSection: function(eltCx) {
+                    return this;
+                }.bind(this));
+        },
 
-			var p;
+        _normalizeSection: function(eltCx) {
 
-			if ( eltCx === null || !eltCx.elt.hasAttribute('src') ) {
+            var p;
 
-				p = Promise.resolve(null);
-			} else {
+            if (eltCx === null || !eltCx.elt.hasAttribute('src')) {
 
-				p = httpVueLoader.httpRequest(eltCx.elt.getAttribute('src'))
-				.then(function(content) {
+                p = Promise.resolve(null);
+            } else {
 
-					eltCx.elt.removeAttribute('src');
-					return content;
-				});
-			}
+                p = httpVueLoader.httpRequest(eltCx.elt.getAttribute('src'))
+                    .then(function(content) {
 
-			return p
-			.then(function(content) {
+                        eltCx.elt.removeAttribute('src');
+                        return content;
+                    });
+            }
 
-				if ( eltCx !== null && eltCx.elt.hasAttribute('lang') ) {
+            return p
+                .then(function(content) {
 
-					var lang = eltCx.elt.getAttribute('lang');
-					eltCx.elt.removeAttribute('lang');
-					return httpVueLoader.langProcessor[lang.toLowerCase()].call(this, content === null ? eltCx.getContent() : content);
-				}
-				return content;
-			}.bind(this))
-			.then(function(content) {
+                    if (eltCx !== null && eltCx.elt.hasAttribute('lang')) {
 
-				if ( content !== null )
-					eltCx.setContent(content);
-			});
-		},
+                        var lang = eltCx.elt.getAttribute('lang');
+                        eltCx.elt.removeAttribute('lang');
+                        return httpVueLoader.langProcessor[lang.toLowerCase()].call(this, content === null ? eltCx.getContent() : content);
+                    }
+                    return content;
+                }.bind(this))
+                .then(function(content) {
 
-		normalize: function() {
+                    if (content !== null)
+                        eltCx.setContent(content);
+                });
+        },
 
-			return Promise.all(Array.prototype.concat(
-				this._normalizeSection(this.template),
-				this._normalizeSection(this.script),
-				this.styles.map(this._normalizeSection)
-			))
-			.then(function() {
+        normalize: function() {
 
-				return this;
-			}.bind(this));
-		},
+            return Promise.all(Array.prototype.concat(
+                    this._normalizeSection(this.template),
+                    this._normalizeSection(this.script),
+                    this.styles.map(this._normalizeSection)
+                ))
+                .then(function() {
 
-		compile: function() {
+                    return this;
+                }.bind(this));
+        },
 
-			return Promise.all(Array.prototype.concat(
-				this.template && this.template.compile(),
-				this.script && this.script.compile(),
-				this.styles.map(function(style) { return style.compile(); })
-			))
-			.then(function() {
+        compile: function() {
 
-				return this;
-			}.bind(this));
-		}
-	};
+            return Promise.all(Array.prototype.concat(
+                    this.template && this.template.compile(),
+                    this.script && this.script.compile(),
+                    this.styles.map(function(style) { return style.compile(); })
+                ))
+                .then(function() {
 
-	function Component(name) {
+                    return this;
+                }.bind(this));
+        }
+    };
 
-		this.name = name;
-		this.template = null;
-		this.script = null;
-		this.styles = [];
-		this._scopeId = '';
-	}
+    function Component(name) {
 
-	function identity(value) {
+        this.name = name;
+        this.template = null;
+        this.script = null;
+        this.styles = [];
+        this._scopeId = '';
+    }
 
-		return value;
-	}
+    function identity(value) {
 
-	function parseComponentURL(url) {
+        return value;
+    }
 
-		var comp = url.match(/(.*?)([^/]+?)\/?(\.vue)?(\?.*|#.*|$)/);
-		return {
-			name: comp[2],
-			url: comp[1] + comp[2] + (comp[3] === undefined ? '/index.vue' : comp[3]) + comp[4]
-		};
-	}
+    function parseComponentURL(url) {
 
-	function resolveURL(baseURL, url) {
+        var comp = url.match(/(.*?)([^/]+?)\/?(\.vue)?(\?.*|#.*|$)/);
+        return {
+            name: comp[2],
+            url: comp[1] + comp[2] + (comp[3] === undefined ? '/index.vue' : comp[3]) + comp[4]
+        };
+    }
 
-		if (url.substr(0, 2) === './' || url.substr(0, 3) === '../') {
-			return baseURL + url;
-		}
-		return url;
-	}
+    function resolveURL(baseURL, url) {
 
+        if (url.substr(0, 2) === './' || url.substr(0, 3) === '../') {
+            return baseURL + url;
+        }
+        return url;
+    }
 
-	httpVueLoader.load = function(url, name) {
 
-		return function() {
+    httpVueLoader.load = function(url, name) {
 
-			return new Component(name).load(url)
-			.then(function(component) {
+        return function() {
 
-				return component.normalize();
-			})
-			.then(function(component) {
+            return new Component(name).load(url)
+                .then(function(component) {
 
-				return component.compile();
-			})
-			.then(function(component) {
+                    return component.normalize();
+                })
+                .then(function(component) {
 
-				var exports = component.script !== null ? component.script.module.exports : {};
+                    return component.compile();
+                })
+                .then(function(component) {
 
-				if ( component.template !== null )
-					exports.template = component.template.getContent();
+                    var exports = component.script !== null ? component.script.module.exports : {};
 
-				if ( exports.name === undefined )
-					if ( component.name !== undefined )
-						exports.name = component.name;
+                    if (component.template !== null)
+                        exports.template = component.template.getContent();
 
-				exports._baseURI = component.baseURI;
+                    if (exports.name === undefined)
+                        if (component.name !== undefined)
+                            exports.name = component.name;
 
-				return exports;
-			});
-		};
-	};
+                    exports._baseURI = component.baseURI;
 
+                    return exports;
+                });
+        };
+    };
 
-	httpVueLoader.register = function(Vue, url) {
 
-		var comp = parseComponentURL(url);
-		Vue.component(comp.name, httpVueLoader.load(comp.url));
-	};
+    httpVueLoader.register = function(Vue, url) {
 
-	httpVueLoader.install = function(Vue) {
+        var comp = parseComponentURL(url);
+        Vue.component(comp.name, httpVueLoader.load(comp.url));
+    };
 
-		Vue.mixin({
+    httpVueLoader.install = function(Vue) {
 
-			beforeCreate: function () {
+        Vue.mixin({
 
-				var components = this.$options.components;
+            beforeCreate: function() {
 
-				for ( var componentName in components ) {
+                var components = this.$options.components;
 
-					if ( typeof(components[componentName]) === 'string' && components[componentName].substr(0, 4) === 'url:' ) {
+                for (var componentName in components) {
 
-						var comp = parseComponentURL(components[componentName].substr(4));
+                    if (typeof(components[componentName]) === 'string' && components[componentName].substr(0, 4) === 'url:') {
 
-						var componentURL = ('_baseURI' in this.$options) ? resolveURL(this.$options._baseURI, comp.url) : comp.url;
+                        var comp = parseComponentURL(components[componentName].substr(4));
 
-						if ( isNaN(componentName) )
-							components[componentName] = httpVueLoader.load(componentURL, componentName);
-						else
-							components[componentName] = Vue.component(comp.name, httpVueLoader.load(componentURL, comp.name));
-					}
-				}
-			}
-		});
-	};
+                        var componentURL = ('_baseURI' in this.$options) ? resolveURL(this.$options._baseURI, comp.url) : comp.url;
 
-	httpVueLoader.require = function(moduleName) {
+                        if (isNaN(componentName))
+                            components[componentName] = httpVueLoader.load(componentURL, componentName);
+                        else
+                            components[componentName] = Vue.component(comp.name, httpVueLoader.load(componentURL, comp.name));
+                    }
+                }
+            }
+        });
+    };
 
-		return window[moduleName];
-	};
+    httpVueLoader.require = function(moduleName) {
 
-	httpVueLoader.httpRequest = function(url) {
+        return window[moduleName];
+    };
 
-		return new Promise(function(resolve, reject) {
+    httpVueLoader.httpRequest = function(url) {
 
-			var xhr = new XMLHttpRequest();
-			xhr.open('GET', url);
-            		xhr.responseType = 'text';
+        return new Promise(function(resolve, reject) {
 
-			xhr.onreadystatechange = function() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url);
+            xhr.responseType = 'text';
 
-				if ( xhr.readyState === 4 ) {
+            xhr.onreadystatechange = function() {
 
-					if ( xhr.status >= 200 && xhr.status < 300 )
-						resolve(xhr.responseText);
-					else
-						reject(xhr.status);
-				}
-			};
+                if (xhr.readyState === 4) {
 
-			xhr.send(null);
-		});
-	};
+                    if (xhr.status >= 200 && xhr.status < 300)
+                        resolve(xhr.responseText);
+                    else
+                        reject(xhr.status);
+                }
+            };
 
-	httpVueLoader.langProcessor = {
-		html: identity,
-		js: identity,
-		css: identity
-	};
+            xhr.send(null);
+        });
+    };
 
-	httpVueLoader.scriptExportsHandler = identity;
+    httpVueLoader.langProcessor = {
+        html: identity,
+        js: identity,
+        css: identity
+    };
 
-	function httpVueLoader(url, name) {
+    httpVueLoader.scriptExportsHandler = identity;
 
-		var comp = parseComponentURL(url);
-		return httpVueLoader.load(comp.url, name);
-	}
+    function httpVueLoader(url, name) {
 
-	return httpVueLoader;
+        var comp = parseComponentURL(url);
+        return httpVueLoader.load(comp.url, name);
+    }
+
+    return httpVueLoader;
 });
