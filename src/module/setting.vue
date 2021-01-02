@@ -29,18 +29,39 @@
             <!-- Start .sidebar-inner -->
             <div class="sidebar-inner">
                 <!-- Start #sideNav -->
-                <div class="sidebar-navigation">导航菜单1</div>
+                <div class="sidebar-navigation">导航菜单</div>
                 <ul id="sideNav" class="nav nav-pills nav-stacked main-menu">
                     <li class="active">
                         <a href="#">
                             <i class="fa fa-home"></i>
-                            <span> 引导页</span>
+                            <span> 权限配置</span>
                         </a>
+                         <ul class="nav sub-menu">
+                            <li class="">
+                                 <router-link to="/auth/depart">
+                                    <span> 部门列表</span>
+                                </router-link>
+                            </li>
+                        </ul>
                         <ul class="nav sub-menu">
-                            <li class="active">
-                                <a href="#app">
-                                    <span> 引导页</span>
-                                </a>
+                            <li class="">
+                                 <router-link to="/auth/role">
+                                    <span> 角色列表</span>
+                                </router-link>
+                            </li>
+                        </ul>
+                         <ul class="nav sub-menu">
+                            <li class="">
+                                 <router-link to="/auth/user">
+                                    <span> 用户列表</span>
+                                </router-link>
+                            </li>
+                        </ul>
+                         <ul class="nav sub-menu">
+                            <li class="">
+                                 <router-link to="/auth/menu">
+                                    <span> 菜单列表</span>
+                                </router-link>
                             </li>
                         </ul>
                     </li>

@@ -62,7 +62,11 @@ function server(cb) {
         port: '1357',
         livereload: true, //自动刷新
         direactoryListing: true, //指定目录找到
-        open: true //自动打开
+        open: true, //自动打开
+        proxies: [{
+            source: '/api/',
+            target: 'http://127.0.0.1:8003/' //要请求的接口
+        }]
     }));
     cb();
 }

@@ -10,7 +10,7 @@ const Bar = { template: '<div>bar</div>' }
 
 const routes = [{
         path: '/login',
-        component: Login
+        component: Vue.import('/login.vue')
     }, {
         path: '/',
         redirect: '/component'
@@ -19,21 +19,27 @@ const routes = [{
         component: Vue.import('/module/component.vue'),
         children: [{
             path: '/component/table',
-            component: Vue.import('/module/component/table.vue'),
+            component: Vue.import('/module/component/table.vue')
         }, {
             path: '/component/form',
-            component: Vue.import('/module/component/form.vue'),
+            component: Vue.import('/module/component/form.vue')
         }]
     },
     {
         path: '/setting',
         component: Vue.import('/module/setting.vue'),
         children: [{
-            path: '/setting/user',
-            component: Vue.import('/module/setting/table.vue'),
+            path: '/auth/user',
+            component: Vue.import('/module/auth/user.vue')
         }, {
-            path: '/setting/form',
-            component: Vue.import('/module/setting/form.vue'),
+            path: '/auth/role',
+            component: Vue.import('/module/auth/role.vue')
+        }, {
+            path: '/auth/menu',
+            component: Vue.import('/module/auth/menu.vue')
+        }, {
+            path: '/auth/depart',
+            component: Vue.import('/module/auth/depart.vue')
         }]
 
     },
