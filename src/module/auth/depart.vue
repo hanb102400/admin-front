@@ -1,6 +1,12 @@
 <template>
 <div>
-    <el-table :data="tableData" style="width: 100%;margin-bottom: 20px;" row-key="id" border default-expand-all :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+
+   <el-breadcrumb class="breadcrumb" separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item> 权限管理</el-breadcrumb-item>
+        <el-breadcrumb-item> 角色管理 </el-breadcrumb-item>
+    </el-breadcrumb>
+
+    <el-table :data="tableData" style="width: 100%;margin-bottom: 20px;" row-key="id" border default-expand-all :tree-props="{children: 'children', hasChildren: 'hasChildren'}" size="mini">
         <el-table-column prop="departName" label="部门名称" sortable width="180">
         </el-table-column>
         <el-table-column prop="status" label="状态" sortable width="180">

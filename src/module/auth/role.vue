@@ -2,14 +2,14 @@
 <div>
     <el-breadcrumb class="breadcrumb" separator-class="el-icon-arrow-right">
         <el-breadcrumb-item> 权限管理</el-breadcrumb-item>
-        <el-breadcrumb-item> 用户管理 </el-breadcrumb-item>
+        <el-breadcrumb-item> 角色管理 </el-breadcrumb-item>
     </el-breadcrumb>
-    <el-form inline :model="query" label-position="right" label-width="100px" class="query-form" size="mini">
-        <el-form-item label="用户ID">
-            <el-input v-model="query.userId" placeholder="输入查询"></el-input>
+    <el-form inline :model="query" label-position="right" label-width="160px" class="query-form" size="mini">
+        <el-form-item label="角色ID">
+            <el-input v-model="query.roleId" placeholder="输入查询"></el-input>
         </el-form-item>
-        <el-form-item label="昵称">
-            <el-input v-model="query.nickname" placeholder="输入查询">
+        <el-form-item label="角色名称">
+            <el-input v-model="query.roleName" placeholder="输入查询">
             </el-input>
         </el-form-item>
         <el-form-item>
@@ -22,20 +22,18 @@
         <el-button type="success" size="mini" plain>导出</el-button>
     </div>
     <el-table v-loading="loading" :data="tableData" style="width: 100%" class="table" stripe border size="mini">
-        <el-table-column prop="userId" label="用户ID" width="180">
+        <el-table-column prop="roleId" label="角色ID" width="180">
         </el-table-column>
-        <el-table-column prop="username" label="账号" width="180">
+        <el-table-column prop="roleName" label="角色名称" width="220">
         </el-table-column>
-        <el-table-column prop="nickname" label="姓名">
+        <el-table-column prop="roleCode" label="角色编码">
         </el-table-column>
-        <el-table-column prop="mobile" label="手机号">
+        <el-table-column prop="scope" label="授权范围">
         </el-table-column>
         <el-table-column label="状态">
             <template slot-scope="scope">
                 <el-switch v-model="scope.row.status" active-color="#13ce66" :active-value="0" :inactive-value="1"></el-switch>
             </template>
-        </el-table-column>
-        <el-table-column prop="createTime" label="创建时间">
         </el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
@@ -52,46 +50,20 @@
         <el-form ref="form" :model="form" :rules="rules" label-width="80px" size="mini">
             <el-row>
                 <el-col :span="12">
-                    <el-form-item label="用户昵称" prop="nickname">
-                        <el-input v-model="form.nickname" placeholder="请输入用户昵称" />
+                    <el-form-item label="角色名称" prop="roleName">
+                        <el-input v-model="form.roleName" placeholder="请输入用户昵称" />
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                    <el-form-item label="归属部门" prop="departId">
-                        <treeselect v-model="form.departId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门" />
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="12">
-                    <el-form-item label="手机号码" prop="mobile">
-                        <el-input v-model="form.mobile" placeholder="请输入手机号码" maxlength="11" />
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="邮箱" prop="email">
-                        <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
+                    <el-form-item label="角色编码" prop="roleCode">
+                        <el-input v-model="form.roleCode" placeholder="请输入用户昵称" />
                     </el-form-item>
                 </el-col>
             </el-row>
             <el-row>
                 <el-col :span="12">
-                    <el-form-item v-if="form.userId == undefined" label="用户名称" prop="username">
-                        <el-input v-model="form.username" placeholder="请输入用户名称" />
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">
-                        <el-input v-model="form.password" placeholder="请输入用户密码" type="password" />
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="12">
-                    <el-form-item label="用户性别">
-                        <el-select v-model="form.sex" placeholder="请选择">
-                            <el-option v-for="dict in sexOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue"></el-option>
-                        </el-select>
+                    <el-form-item label="授权范围" prop="scope">
+                        <el-input v-model="form.scope" placeholder="请输入手机号码" maxlength="11" />
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -99,22 +71,6 @@
                         <el-radio-group v-model="form.status">
                             <el-radio v-for="opt in statusOptions" :key="opt.key" :label="opt.val">{{opt.key}}</el-radio>
                         </el-radio-group>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="12">
-                    <el-form-item label="岗位">
-                        <el-select v-model="form.postIds" multiple placeholder="请选择">
-                            <el-option v-for="item in postOptions" :key="item.postId" :label="item.postName" :value="item.postId" :disabled="item.status == 1"></el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="角色">
-                        <el-select v-model="form.roleIds" multiple placeholder="请选择">
-                            <el-option v-for="item in roleOptions" :key="item.roleId" :label="item.roleName" :value="item.roleId" :disabled="item.status == 1"></el-option>
-                        </el-select>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -160,15 +116,15 @@ module.exports = {
                 this.$refs['form'].resetFields();
             }
             this.showDialog = true;
-            const resp = await Net.get('/sysUser/detail', {
-                userId: row.userId
+            const resp = await Net.get('/sysRole/detail', {
+                roleId: row.roleId
             });
             this.form = resp.data;
         },
         handleSubmit: function () {
             this.$refs['form'].validate((valid) => {
                 if (valid) {
-                    if (this.form.userId != undefined) {
+                    if (this.form.roleId != undefined) {
                         this.submitEdit();
                     } else {
                         this.submitAdd();
@@ -180,14 +136,14 @@ module.exports = {
             });
 
         },
-        handleRemove:  function (index, row) {
+        handleRemove: function (index, row) {
             this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(async () => {
-                const resp = await Net.post('/sysUser/remove', {
-                    userId: row.userId
+                const resp = await Net.post('/sysRole/remove', {
+                    roleId: row.roleId
                 });
                 if (resp.code == 0) {
                     this.$message({
@@ -206,7 +162,7 @@ module.exports = {
 
         },
         submitAdd: async function () {
-            const resp = await Net.post('/sysUser/add', this.form);
+            const resp = await Net.post('/sysRole/add', this.form);
             if (resp.code == 0) {
                 this.$message({
                     type: 'success',
@@ -223,7 +179,7 @@ module.exports = {
             }
         },
         submitEdit: async function () {
-            const resp = await Net.post('/sysUser/edit', this.form);
+            const resp = await Net.post('/sysRole/edit', this.form);
             if (resp.code == 0) {
                 this.$message({
                     type: 'success',
@@ -250,7 +206,7 @@ module.exports = {
         loadingData: async function () {
             var that = this;
             //请求后台数据
-            const resp = await Net.post('/sysUser/list?pageNo=' + this.pageNo + "&pageSize=" + this.pageSize, this.query)
+            const resp = await Net.post('/sysRole/list?pageNo=' + this.pageNo + "&pageSize=" + this.pageSize, this.query)
             this.tableData = resp.data.content;
             this.pageNo = resp.data.pageNo
             this.pageSize = resp.data.pageSize
@@ -260,27 +216,15 @@ module.exports = {
     data() {
         return {
             showDialog: false,
-            query: {
-
-            },
-            form: {
-
-            },
+            query: {},
+            form: {},
             rules: {
-                username: [{
-                        required: true,
-                        message: '请输入用户名, 必须为字母数字下划线',
-                        pattern: /^[a-zA-Z0-9_]+$/,
-                        trigger: 'blur'
-                    },
-                    {
-                        min: 4,
-                        max: 20,
-                        message: '长度在 4 到 20 个字符',
-                        trigger: 'blur'
-                    }
-                ],
-                nickname: [{
+                roleName: [{
+                    required: true,
+                    message: '请输入用户名',
+                    trigger: 'blur'
+                }],
+                roleCode: [{
                     required: true,
                     message: '请输入昵称',
                     trigger: 'blur'

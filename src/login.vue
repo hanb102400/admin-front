@@ -9,7 +9,7 @@
             <el-input type="password" placeholder="请输入密码" v-model="form.password" />
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('loginForm')">登录</el-button>
+            <el-button type="primary" v-on:click="submitLogin()">登录</el-button>
         </el-form-item>
     </el-form>
 
@@ -31,7 +31,7 @@ module.exports = {
                 username: '',
                 password: ''
             },
-            msg:'',
+            msg: '',
             // 表单验证，需要在 el-form-item 元素中增加 prop 属性
             rules: {
                 username: [{
@@ -51,16 +51,28 @@ module.exports = {
         }
     },
     methods: {
-        async onSubmit(formName) {
+        async submitLogin() {
             const resp = await Net.postForm('/login', this.form);
             // 为表单绑定验证功能
             if (resp.code == '4001') {
-                this.msg='登录失败';
+                this.msg = '登录失败';
                 this.dialogVisible = true;
                 return false;
-            } if  (resp.code == '0') {
-                ELEMENT.Message.success({ message: '登录成功!' });
+            }
+            if (resp.code == '0') {
+                ELEMENT.Message.success({
+                    message: '登录成功!'
+                });
                 this.$router.push("/");
+            }
+        }
+    },
+    created() {
+        var that = this;
+        document.onkeydown = function (e) {
+            var key = window.event.keyCode;
+            if (key == 13 || key == 100) {
+                that.submitLogin();
             }
         }
     }

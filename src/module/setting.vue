@@ -1,27 +1,6 @@
 <template>
 <div>
-    <div class="header">
-        <nav class="navbar navbar-expand-lg navbar-light">
-            <div class="navbar-wrapper">
-                <div class="navbar-brand" logo-theme="theme1">管理后台系统</div>
-            </div>
-            <div class="container-fluid">
-                <div class="collapse navbar-collapse">
-                    <ul class="navbar-nav nav-left">
-                        <li class="nav-item active">
-                            <router-link to="/component">常用组件 </router-link>
-                        </li>
-                        <li class="nav-item">
-                            <router-link to="/setting">系统配置 </router-link>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" tabindex="-1">Disabled</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </div>
+    <ex-header></ex-header>
 
     <div class="main-container-wrapper">
 
@@ -36,30 +15,30 @@
                             <i class="fa fa-home"></i>
                             <span> 权限配置</span>
                         </a>
-                         <ul class="nav sub-menu">
+                        <ul class="nav sub-menu">
                             <li class="">
-                                 <router-link to="/auth/depart">
-                                    <span> 部门列表</span>
+                                <router-link to="/auth/depart">
+                                    <span>部门列表</span>
                                 </router-link>
                             </li>
                         </ul>
                         <ul class="nav sub-menu">
                             <li class="">
-                                 <router-link to="/auth/role">
+                                <router-link to="/auth/role">
                                     <span> 角色列表</span>
                                 </router-link>
                             </li>
                         </ul>
-                         <ul class="nav sub-menu">
+                        <ul class="nav sub-menu">
                             <li class="">
-                                 <router-link to="/auth/user">
+                                <router-link to="/auth/user">
                                     <span> 用户列表</span>
                                 </router-link>
                             </li>
                         </ul>
-                         <ul class="nav sub-menu">
+                        <ul class="nav sub-menu">
                             <li class="">
-                                 <router-link to="/auth/menu">
+                                <router-link to="/auth/menu">
                                     <span> 菜单列表</span>
                                 </router-link>
                             </li>
@@ -100,3 +79,17 @@
     </div>
 </div>
 </template>
+
+<script>
+module.exports = {
+    components: {
+        exHeader: Vue.import("/component/ExHeader.vue")
+    },
+    data() {
+        return {
+
+        }
+    }
+
+}
+</script>
