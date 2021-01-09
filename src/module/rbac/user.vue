@@ -13,15 +13,20 @@
             </el-input>
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" @click="handleSearch()">查询</el-button>
-            <el-button type="info" icon="el-icon-edit" @click="handleReset()">重置</el-button>
+            <el-button type="primary" icon="el-icon-search" @click="handleSearch()">查询</el-button>
+            <el-button type="info" icon="el-icon-refresh" @click="handleReset()">重置</el-button>
         </el-form-item>
     </el-form>
-    <div>
-        <el-button type="primary" size="mini" plain @click="handleAdd()">新增</el-button>
-        <el-button type="success" size="mini" plain>导出</el-button>
+    <div class="tool-bar">
+        <el-button type="primary" size="mini" plain icon="el-icon-plus" @click="handleAdd()">新增</el-button>
+        <el-button type="success" size="mini" plain icon="el-icon-edit" @click="handleEdit()">修改</el-button>
+        <el-button type="danger" size="mini" plain icon="el-icon-delete" @click="handleRemove()">删除</el-button>
+        <el-button type="info" size="mini" plain icon="el-icon-upload" @click="handleImport()">导入</el-button>
+        <el-button type="info" size="mini" plain icon="el-icon-download" @click="handleExport()">导出</el-button>
     </div>
-    <el-table v-loading="loading" :data="tableData" style="width: 100%" class="table" stripe border size="mini">
+    <el-table v-loading="loading" :data="tableData" style="width: 100%" class="table" stripe border size="mini" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55">
+        </el-table-column>
         <el-table-column prop="userId" label="用户ID" width="180">
         </el-table-column>
         <el-table-column prop="username" label="账号" width="180">
@@ -52,30 +57,6 @@
         <el-form ref="form" :model="form" :rules="rules" label-width="80px" size="mini">
             <el-row>
                 <el-col :span="12">
-                    <el-form-item label="用户昵称" prop="nickname">
-                        <el-input v-model="form.nickname" placeholder="请输入用户昵称" />
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="归属部门" prop="departId">
-                        <treeselect v-model="form.departId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门" />
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="12">
-                    <el-form-item label="手机号码" prop="mobile">
-                        <el-input v-model="form.mobile" placeholder="请输入手机号码" maxlength="11" />
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="邮箱" prop="email">
-                        <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="12">
                     <el-form-item v-if="form.userId == undefined" label="用户名称" prop="username">
                         <el-input v-model="form.username" placeholder="请输入用户名称" />
                     </el-form-item>
@@ -88,25 +69,33 @@
             </el-row>
             <el-row>
                 <el-col :span="12">
-                    <el-form-item label="用户性别">
-                        <el-select v-model="form.sex" placeholder="请选择">
-                            <el-option v-for="dict in sexOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue"></el-option>
-                        </el-select>
+                    <el-form-item label="用户昵称" prop="nickname">
+                        <el-input v-model="form.nickname" placeholder="请输入用户昵称" />
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                    <el-form-item label="状态">
-                        <el-radio-group v-model="form.status">
-                            <el-radio v-for="opt in statusOptions" :key="opt.key" :label="opt.val">{{opt.key}}</el-radio>
-                        </el-radio-group>
+                    <el-form-item label="手机号码" prop="mobile">
+                        <el-input v-model="form.mobile" placeholder="请输入手机号码" maxlength="11" />
                     </el-form-item>
                 </el-col>
             </el-row>
             <el-row>
                 <el-col :span="12">
-                    <el-form-item label="岗位">
-                        <el-select v-model="form.postIds" multiple placeholder="请选择">
-                            <el-option v-for="item in postOptions" :key="item.postId" :label="item.postName" :value="item.postId" :disabled="item.status == 1"></el-option>
+                    <el-form-item label="邮箱" prop="email">
+                        <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="归属部门" prop="departId">
+                        <treeselect v-model="form.departId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门" />
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="12">
+                    <el-form-item label="用户性别">
+                        <el-select v-model="form.sex" placeholder="请选择">
+                            <el-option v-for="item  in sexOptions" :key="item .value"  :value="item .value" :label="item.label"></el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
@@ -115,6 +104,15 @@
                         <el-select v-model="form.roleIds" multiple placeholder="请选择">
                             <el-option v-for="item in roleOptions" :key="item.roleId" :label="item.roleName" :value="item.roleId" :disabled="item.status == 1"></el-option>
                         </el-select>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="12">
+                    <el-form-item label="状态">
+                        <el-radio-group v-model="form.status">
+                            <el-radio v-for="item  in statusOptions" :key="item .value" :label="item .value">{{item .label}}</el-radio>
+                        </el-radio-group>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -128,7 +126,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button type="primary" @click="handleSubmit">确 定</el-button>
-            <el-button @click="cancel">取 消</el-button>
+            <el-button @click="handleCancel">取 消</el-button>
         </div>
     </el-dialog>
 </div>
@@ -137,7 +135,7 @@
 <script>
 module.exports = {
     methods: {
-        cancel: function () {
+        handleCancel: function () {
             this.showDialog = false;
         },
         handleSearch: async function () {
@@ -145,25 +143,51 @@ module.exports = {
             this.loadingData();
         },
         handleReset: function () {
-            if (this.$refs['query']) {
-                this.$refs['query'].resetFields();
-            }
+            this.query = {};
         },
         handleAdd: function () {
             if (this.$refs['form']) {
                 this.$refs['form'].resetFields();
             }
+            this.title = '新增用户';
             this.showDialog = true;
         },
         handleEdit: async function (index, row) {
+            if (!row && !this.singleSelected) {
+                this.$message.error('请选择一项!');
+                return;
+            }
             if (this.$refs['form']) {
                 this.$refs['form'].resetFields();
             }
+            this.title = '修改用户';
             this.showDialog = true;
             const resp = await Net.get('/sysUser/detail', {
-                userId: row.userId
+                userId: this.getSelectId(row)
             });
             this.form = resp.data;
+        },
+        handleRemove: function (index, row) {
+            if (!row && !this.singleSelected && !this.multipleSelected) {
+                this.$message.error('请选择一项!');
+                return;
+            }
+            this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(async () => {
+                const resp = await Net.get('/sysUser/remove', {
+                    userId: this.getSelectId(row)
+                });
+                if (resp.code == 0) {
+                    this.$message.success('删除成功!');
+                    this.loadingData();
+                }
+            }).catch((e) => {
+                console.log(e)
+                this.$message.info('已取消删除')
+            });
         },
         handleSubmit: function () {
             this.$refs['form'].validate((valid) => {
@@ -180,63 +204,26 @@ module.exports = {
             });
 
         },
-        handleRemove:  function (index, row) {
-            this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(async () => {
-                const resp = await Net.post('/sysUser/remove', {
-                    userId: row.userId
-                });
-                if (resp.code == 0) {
-                    this.$message({
-                        type: 'success',
-                        message: '删除成功!'
-                    });
-                    this.loadingData();
-                }
-
-            }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '已取消删除'
-                });
-            });
-
-        },
         submitAdd: async function () {
             const resp = await Net.post('/sysUser/add', this.form);
             if (resp.code == 0) {
-                this.$message({
-                    type: 'success',
-                    message: '添加成功!'
-                });
+                this.$message.success('添加成功!')
                 this.showDialog = false;
                 this.loadingData();
                 this.$refs['form'].resetFields();
             } else {
-                this.$message({
-                    type: 'error',
-                    message: resp.message
-                });
+                this.$message.error(resp.message);
             }
         },
         submitEdit: async function () {
             const resp = await Net.post('/sysUser/edit', this.form);
             if (resp.code == 0) {
-                this.$message({
-                    type: 'success',
-                    message: '添加成功!'
-                });
+                this.$message.success('添加成功!')
                 this.showDialog = false;
                 this.loadingData();
                 this.$refs['form'].resetFields();
             } else {
-                this.$message({
-                    type: 'error',
-                    message: resp.message
-                });
+                this.$message.error(resp.message);
             }
         },
         handleSizeChange: function (pageSize) {
@@ -247,6 +234,13 @@ module.exports = {
             this.pageNo = pageNo;
             this.loadingData();
         },
+        getSelectId: function (row) {
+            if (row) {
+                return row.userId;
+            } else {
+                return this.ids.join(',')
+            }
+        },
         loadingData: async function () {
             var that = this;
             //请求后台数据
@@ -255,11 +249,21 @@ module.exports = {
             this.pageNo = resp.data.pageNo
             this.pageSize = resp.data.pageSize
             this.totalCount = resp.data.totalCount
+        },
+        handleSelectionChange(selection) {
+            this.singleSelected = selection.length == 1;
+            this.multipleSelected = selection.length > 1;
+            this.ids = selection.map(item => item.userId);
         }
     },
     data() {
         return {
+            title: '',
+            loading: true,
             showDialog: false,
+            singleSelected: false,
+            multipleSelected: false,
+            multipleSelection: [],
             query: {
 
             },
@@ -292,12 +296,21 @@ module.exports = {
             pageSize: 15,
             tableData: [],
             statusOptions: [{
-                    key: '正常',
-                    val: 0
+                    label: '正常',
+                    value: 0
                 },
                 {
-                    key: '停用',
-                    val: 1
+                    label: '停用',
+                    value: 1
+                }
+            ],
+            sexOptions: [{
+                    label: '男',
+                    value: 1
+                },
+                {
+                    label: '女',
+                    value: 2
                 }
             ]
         }
@@ -305,6 +318,7 @@ module.exports = {
     mounted() {
         this.pageNo = 1;
         this.loadingData()
+        this.loading = false;
     }
 }
 </script>

@@ -8,6 +8,10 @@ const Bar = { template: '<div>bar</div>' }
 // 或者，只是一个组件配置对象。
 // 我们晚点再讨论嵌套路由。
 
+
+
+var ExHeader = Vue.import("/layout/component/ExHeader.vue")
+
 const routes = [{
         path: '/login',
         component: Vue.import('/login.vue')
@@ -29,17 +33,17 @@ const routes = [{
         path: '/setting',
         component: Vue.import('/module/setting.vue'),
         children: [{
-            path: '/auth/user',
-            component: Vue.import('/module/auth/user.vue')
+            path: '/rbac/user',
+            component: Vue.import('/module/rbac/user.vue')
         }, {
-            path: '/auth/role',
-            component: Vue.import('/module/auth/role.vue')
+            path: '/rbac/role',
+            component: Vue.import('/module/rbac/role.vue')
         }, {
-            path: '/auth/menu',
-            component: Vue.import('/module/auth/menu.vue')
+            path: '/rbac/menu',
+            component: Vue.import('/module/rbac/menu.vue')
         }, {
-            path: '/auth/depart',
-            component: Vue.import('/module/auth/depart.vue')
+            path: '/rbac/depart',
+            component: Vue.import('/module/rbac/depart.vue')
         }]
 
     },
@@ -49,12 +53,15 @@ const routes = [{
     }
 ]
 
+
+
 // 3. 创建 router 实例，然后传 `routes` 配置
 // 你还可以传别的配置参数, 不过先这么简单着吧。
 const router = new VueRouter({
     routes // (缩写) 相当于 routes: routes
 })
 
+Vue.component('treeselect', VueTreeselect.Treeselect)
 
 // 4. 创建和挂载根实例。
 // 记得要通过 router 配置参数注入路由，

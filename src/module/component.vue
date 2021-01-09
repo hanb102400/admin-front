@@ -54,7 +54,9 @@
 
             <div class="content-wrapper">
                 <div class="content-inner">
-                    <router-view></router-view>
+                    <transition name="fade-transform" mode="out-in">
+                        <router-view :key="key"></router-view>
+                    </transition>
                 </div>
             </div>
 
@@ -65,13 +67,17 @@
 <script>
 module.exports = {
     components: {
-        exHeader: Vue.import("/component/ExHeader.vue")
+        exHeader: ExHeader
+    },
+    computed: {
+        key() {
+            return this.$route.path
+        }
     },
     data() {
         return {
 
         }
     }
-
 }
 </script>

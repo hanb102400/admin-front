@@ -1,7 +1,7 @@
 <template>
 <div>
     <div id="app">
-    <router-view></router-view>
+        <router-view></router-view>
     </div>
 </div>
 </template>
@@ -15,7 +15,10 @@ module.exports = {
         }
     },
     mounted: function () {
-
-    },
+        window.onfocus = async function () {
+            const res = await Net.get('/login/status')
+            console.log("激活页面。请求状态：" + res);
+        }
+    }
 }
 </script>

@@ -17,28 +17,28 @@
                         </a>
                         <ul class="nav sub-menu">
                             <li class="">
-                                <router-link to="/auth/depart">
+                                <router-link to="/rbac/depart">
                                     <span>部门列表</span>
                                 </router-link>
                             </li>
                         </ul>
                         <ul class="nav sub-menu">
                             <li class="">
-                                <router-link to="/auth/role">
+                                <router-link to="/rbac/role">
                                     <span> 角色列表</span>
                                 </router-link>
                             </li>
                         </ul>
                         <ul class="nav sub-menu">
                             <li class="">
-                                <router-link to="/auth/user">
+                                <router-link to="/rbac/user">
                                     <span> 用户列表</span>
                                 </router-link>
                             </li>
                         </ul>
                         <ul class="nav sub-menu">
                             <li class="">
-                                <router-link to="/auth/menu">
+                                <router-link to="/rbac/menu">
                                     <span> 菜单列表</span>
                                 </router-link>
                             </li>
@@ -73,7 +73,9 @@
 
         <div class="content-wrapper">
             <div class="content-inner">
-                <router-view></router-view>
+                <transition name="fade-transform" mode="out-in">
+                    <router-view :key="key"></router-view>
+                </transition>
             </div>
         </div>
     </div>
@@ -83,7 +85,13 @@
 <script>
 module.exports = {
     components: {
-        exHeader: Vue.import("/component/ExHeader.vue")
+        exHeader: ExHeader
+    },
+    computed: {
+        key() {
+            console.log("this.$route.path", this.$route.path);
+            return this.$route.path
+        }
     },
     data() {
         return {

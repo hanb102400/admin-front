@@ -8,9 +8,7 @@
     }
 
 }*/
-
 Vue.import = function(paths, func) {
-    console.log("paths", typeof paths);
     if (typeof paths === "string") {
         if (!func) {
             return httpVueLoader(paths);
@@ -18,28 +16,27 @@ Vue.import = function(paths, func) {
             httpVueLoader(paths)().then((data) => func(data));
         }
     } else if (Array.isArray(paths)) {
-        console.log("Array", paths);
-
         const promises = paths.map((item) => httpVueLoader(item)());
         if (!func) {
             Promise.all(promises).then((data) => {
-                console.log("datadatadata", data);
                 return data;
             });
         } else {
             Promise.all(promises).then((data) => {
-                console.log("datadatadata", ...data);
                 func(...data);
             });
         }
     }
 };
 
+
 /** net **/
 //设置baseurl
 //axios.defaults.baseURL = 'http://127.0.0.1/';
 //设置超时时间
-axios.defaults.timeout = 10000;
+axios.defaults.timeout = 30000;
+axios.defaults.withCredentials = true;
+axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8';
 
 axios.interceptors.response.use(
     (response) => {
@@ -153,3 +150,13 @@ Net.loadScript = function(src, callback) {
     }
     head.appendChild(script);
 };
+/*
+var App = {}
+
+App.getCookie = function() {
+    return document.cookie;
+};
+
+App.getToken = function() {
+    return '';
+};*/

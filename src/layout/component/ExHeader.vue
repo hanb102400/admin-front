@@ -8,20 +8,20 @@
             <div class="container-fluid">
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav nav-left">
-                        <li class="nav-item active">
-                            <router-link to="/component">
-                                常用组件
-                            </router-link>
-                        </li>
                         <li class="nav-item">
                             <router-link to="/setting">
                                 系统配置
                             </router-link>
                         </li>
+                         <li class="nav-item active">
+                            <router-link to="/component">
+                                常用组件
+                            </router-link>
+                        </li>
                         <li class="nav-item">
-                              <router-link to="/login">
-                                登录
-                              </router-link>
+                              <a @click="logout">
+                                登出
+                              </a>
                         </li>
                     </ul>
                 </div>
@@ -35,6 +35,21 @@
 module.exports = {
     data() {
         return {}
+    },
+    methods:{
+        async logout(){
+             const resp = await Net.post('/logout');
+             if(resp.code==0) {
+                    this.$router.push({
+                        path: "/login",
+                    });
+             }
+             
+        }
+    },
+     mounted() {
+       
     }
+    
 }
 </script>

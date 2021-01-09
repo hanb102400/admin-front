@@ -13,11 +13,11 @@
             </el-input>
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" @click="handleSearch()">查询</el-button>
-            <el-button type="info" icon="el-icon-edit" @click="handleReset()">重置</el-button>
+            <el-button type="primary" icon="el-icon-search"  @click="handleSearch()">查询</el-button>
+            <el-button type="info" icon="el-icon-refresh" @click="handleReset()">重置</el-button>
         </el-form-item>
     </el-form>
-    <div>
+  <div class="tool-bar">
         <el-button type="primary" size="mini" plain @click="handleAdd()">新增</el-button>
         <el-button type="success" size="mini" plain>导出</el-button>
     </div>
