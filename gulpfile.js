@@ -65,7 +65,7 @@ function server(cb) {
         open: true, //自动打开
         proxies: [{
             source: '/api/',
-            target: 'http://127.0.0.1:8003/' //要请求的接口
+            target: 'http://cas.client.com:18081/' //要请求的接口
         }]
     }));
     cb();

@@ -40,13 +40,13 @@
             <template slot-scope="scope">
                 <el-button size="mini" type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">修改</el-button>
                 <el-button size="mini" type="text" icon="el-icon-plus" @click="handleAdd(scope.$index, scope.row)">新增</el-button>
-                <el-button v-if="scope.row.parentId != 0" size="mini" type="text" icon="el-icon-delete" @click="handleRemove(scope.row)">删除</el-button>
+                <el-button v-if="scope.row.parentId != 0" size="mini" type="text" icon="el-icon-delete" @click="handleRemove(scope.$index, scope.row)">删除</el-button>
             </template>
         </el-table-column>
     </el-table>
 
     <el-dialog :title="title" :visible.sync="showDialog" width="600px" append-to-body>
-        <el-form ref="form" :model="form" :rules="rules" label-width="80px" size="mini">
+        <el-form ref="form" :model="form" :rules="rules" label-width="80px" >
             <el-row>
                 <el-col :span="24" v-if="form.parentId !== 0">
                     <el-form-item label="上级部门" prop="parentId">
@@ -87,7 +87,7 @@
                 <el-col :span="12">
                     <el-form-item label="部门状态">
                         <el-radio-group v-model="form.status">
-                            <el-radio v-for="opt in statusOptions" :key="opt.value" :label="opt.value">{{opt.label}}</el-radio>
+                            <el-radio v-for="item in statusOptions" :key="item.value" :label="item.value">{{item.label}}</el-radio>
                         </el-radio-group>
                     </el-form-item>
                 </el-col>
@@ -98,6 +98,7 @@
             <el-button @click="handleCancel">取 消</el-button>
         </div>
     </el-dialog>
+
 </div>
 </template>
 
@@ -120,6 +121,11 @@ module.exports = {
                 departName: [{
                     required: true,
                     message: "部门名称不能为空",
+                    trigger: "blur"
+                }],
+                departCode: [{
+                   pattern: /^[A-Za-z1-9]{0,20}$/,
+                    message: "只能输入20位以内的字母或数字",
                     trigger: "blur"
                 }],
                 sort: [{
@@ -151,12 +157,21 @@ module.exports = {
     },
     methods: {
         handleCancel: function () {
-            this.showDialog = false;
-        },
-        handleAdd: function () {
             if (this.$refs['form']) {
                 this.$refs['form'].resetFields();
             }
+            this.form = {}
+            this.showDialog = false;
+        },
+        handleAdd: function (index, row) {
+            if (this.$refs['form']) {
+                this.$refs['form'].resetFields();
+            }
+            this.form = {}
+            if(row){
+                this.form.parentId = row.departId;
+            }
+            console.log("aadd",this.form);
             this.showDialog = true;
         },
         handleEdit: async function (index, row) {
@@ -169,43 +184,8 @@ module.exports = {
             });
             this.form = resp.data;
         },
-        handleRemove: function (index, row) {
-            if (!row && !this.singleSelected && !this.multipleSelected) {
-                this.$message.error('请选择一项!');
-                return;
-            }
-            this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(async () => {
-                const resp = await Net.get('/sysDepart/remove', {
-                    userId: this.getSelectId(row)
-                });
-                if (resp.code == 0) {
-                    this.$message.success('删除成功!');
-                    this.loadTreeData();
-                }
-
-            }).catch(() => {
-                this.$message.info('已取消删除')
-            });
-        },
-        async handleSearch() {
-            const resp = await Net.post('/sysDepart/tree', this.query)
-            if (resp.code == 0) {
-                this.treeData = resp.data.content;
-            } else {
-                this.$message.error('查询失败!');
-            }
-
-        },
-        async loadTreeData() {
-            const resp = await Net.post('/sysDepart/tree', this.query)
-            console.log("resp.data.content", resp.data.content);
-            this.treeData = resp.data.content;
-        },
-        handleSubmit() {
+         handleSubmit() {
+             console.log("this.formthis.formthis.form",this.form)
             this.$refs['form'].validate((valid) => {
                 if (valid) {
                     if (this.form.departId != undefined) {
@@ -242,6 +222,38 @@ module.exports = {
             } else {
                 this.$message.error(resp.message);
             }
+        },
+        handleRemove: function (index, row) {
+            this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(async () => {
+                const resp = await Net.get('/sysDepart/remove', {
+                    departId: row.departId
+                });
+                if (resp.code == 0) {
+                    this.$message.success('删除成功!');
+                    this.loadTreeData();
+                }
+
+            }).catch((e) => {
+                this.$message.info('已取消删除'+ e)
+            });
+        },
+        async handleSearch() {
+            const resp = await Net.post('/sysDepart/tree', this.query)
+            if (resp.code == 0) {
+                this.treeData = resp.data.content;
+            } else {
+                this.$message.error('查询失败!');
+            }
+
+        },
+        async loadTreeData() {
+            const resp = await Net.post('/sysDepart/tree', this.query)
+            console.log("resp.data.content", resp.data.content);
+            this.treeData = resp.data.content;
         },
         async refreshTreeSelect(){
             const resp = await Net.post('/sysDepart/treeSelect', this.query)

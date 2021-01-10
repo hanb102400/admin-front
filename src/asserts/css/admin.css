@@ -37,8 +37,11 @@ body {
     padding: 10px;
     background-color: #404E67;
     color: #dcdcdc;
-    text-shadow: 3px 3px 3px #f8bab0;
     letter-spacing: 5px;
+    text-shadow: 3px 3px 10px #fe8a7d;
+    letter-spacing: 5px;
+    font-weight: 600;
+    font-size: 18px;
 }
 
 .navbar .container-fluid {
@@ -305,4 +308,12 @@ body {
 
 .pagination .el-pagination__sizes {
     float: left;
+}
+
+.el-dialog__header {
+    background: #404e67;
+}
+
+.el-dialog__title {
+    color: #dcdcdc;
 }

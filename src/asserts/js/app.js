@@ -51,10 +51,18 @@ axios.interceptors.response.use(
         if (error.response.status) {
             switch (error.response.status) {
                 case 401:
-                    //跳转登录
-                    router.push({
-                        path: "/login",
-                    });
+                    console.log(error.response);
+                    if (error.response.data.loginUrl) {
+                        window.document.location = error.response.data.loginUrl;
+                    } else {
+                        //跳转登录
+                        //router.push({
+                        //    path: "/login",
+                        //});
+                    };
+                    break;
+                case 403:
+                    console.log('errr', error);
                     break;
                 case 404:
                     // 404请求不存在

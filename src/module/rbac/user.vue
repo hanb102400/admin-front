@@ -37,7 +37,8 @@
         </el-table-column>
         <el-table-column label="状态">
             <template slot-scope="scope">
-                <el-switch v-model="scope.row.status" active-color="#13ce66" :active-value="0" :inactive-value="1"></el-switch>
+                <el-tag type="success" size="mini" v-if="scope.row.status==0">正常</el-tag>
+                <el-tag type="info" size="mini" v-if="scope.row.status==1">停用</el-tag>
             </template>
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间">
@@ -54,11 +55,11 @@
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="title" :visible.sync="showDialog" width="600px" append-to-body>
-        <el-form ref="form" :model="form" :rules="rules" label-width="80px" size="mini">
+        <el-form ref="form" :model="form" :rules="rules" label-width="80px">
             <el-row>
                 <el-col :span="12">
-                    <el-form-item v-if="form.userId == undefined" label="用户名称" prop="username">
-                        <el-input v-model="form.username" placeholder="请输入用户名称" />
+                    <el-form-item v-if="form.userId == undefined" label="用户账号" prop="username">
+                        <el-input v-model="form.username" placeholder="请输入用户账号" />
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -87,7 +88,7 @@
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="归属部门" prop="departId">
-                        <treeselect v-model="form.departId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门" />
+                        <treeselect v-model="form.departId" :options="departOptions" :show-count="true" placeholder="选择归属部门" />
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -95,7 +96,7 @@
                 <el-col :span="12">
                     <el-form-item label="用户性别">
                         <el-select v-model="form.sex" placeholder="请选择">
-                            <el-option v-for="item  in sexOptions" :key="item .value"  :value="item .value" :label="item.label"></el-option>
+                            <el-option v-for="item  in sexOptions" :key="item .value" :value="item .value" :label="item.label"></el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
@@ -129,12 +130,103 @@
             <el-button @click="handleCancel">取 消</el-button>
         </div>
     </el-dialog>
+
+    <!-- 用户导入对话框 -->
+    <el-dialog :title="upload.title" :visible.sync="upload.showDialog" width="500px" append-to-body>
+        <el-upload class="upload-demo" ref="upload" action="/api/user/import" :limit="1" :data="uploadData" :on-exceed="handleExceed" :auto-upload="false">
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <el-button style="margin-left: 10px;" size="small" type="success" @click="submitImport">开始导入</el-button>
+
+            <div slot="tip" class="el-upload__tip">只能上传Excel文件，且不超过100MB</div>
+        </el-upload>
+        <el-button size="small" type="warning" style="margin-top: 40px;">下载模板</el-button>
+
+    </el-dialog>
 </div>
 </template>
 
 <script>
 module.exports = {
+    data() {
+        return {
+            title: '',
+            showDialog: false,
+            upload: {
+                title: '导入用户',
+                showDialog: false
+
+            },
+            uploadData: {
+
+            },
+            loading: true,
+            singleSelected: false,
+            multipleSelected: false,
+            multipleSelection: [],
+            query: {},
+            form: {},
+            rules: {
+                username: [{
+                        required: true,
+                        message: '请输入用户名, 必须为字母数字下划线',
+                        pattern: /^[a-zA-Z0-9_]+$/,
+                        trigger: 'blur'
+                    },
+                    {
+                        min: 4,
+                        max: 20,
+                        message: '长度在 4 到 20 个字符',
+                        trigger: 'blur'
+                    }
+                ],
+                nickname: [{
+                    required: true,
+                    message: '请输入昵称',
+                    trigger: 'blur'
+                }]
+            },
+            totalCount: 0,
+            totalPage: 0,
+            pageNo: 1,
+            pageSize: 15,
+            tableData: [],
+            departOptions:[],
+            statusOptions: [{
+                    label: '正常',
+                    value: 0
+                },
+                {
+                    label: '停用',
+                    value: 1
+                }
+            ],
+            sexOptions: [{
+                    label: '未知',
+                    value: 0
+                }, {
+                    label: '男',
+                    value: 1
+                },
+                {
+                    label: '女',
+                    value: 2
+                }
+            ]
+        }
+    },
     methods: {
+        handleExceed(files, fileList) {
+            if (files.length > 1) {
+                this.$message.warning(`当前限制选择1个文件`);
+                return false;
+            }
+        },
+        submitImport() {
+            this.$refs.upload.submit();
+        },
+        handleImport() {
+            this.upload.showDialog = true;
+        },
         handleCancel: function () {
             this.showDialog = false;
         },
@@ -149,6 +241,7 @@ module.exports = {
             if (this.$refs['form']) {
                 this.$refs['form'].resetFields();
             }
+            this.form = {}
             this.title = '新增用户';
             this.showDialog = true;
         },
@@ -226,6 +319,11 @@ module.exports = {
                 this.$message.error(resp.message);
             }
         },
+        handleSelectionChange(selection) {
+            this.singleSelected = selection.length == 1;
+            this.multipleSelected = selection.length > 1;
+            this.ids = selection.map(item => item.userId);
+        },
         handleSizeChange: function (pageSize) {
             this.pageSize = pageSize;
             this.loadingData();
@@ -250,73 +348,17 @@ module.exports = {
             this.pageSize = resp.data.pageSize
             this.totalCount = resp.data.totalCount
         },
-        handleSelectionChange(selection) {
-            this.singleSelected = selection.length == 1;
-            this.multipleSelected = selection.length > 1;
-            this.ids = selection.map(item => item.userId);
-        }
-    },
-    data() {
-        return {
-            title: '',
-            loading: true,
-            showDialog: false,
-            singleSelected: false,
-            multipleSelected: false,
-            multipleSelection: [],
-            query: {
+        async refreshTreeSelect() {
+            const resp = await Net.post('/sysDepart/treeSelect', this.query)
+            if (resp.code == 0) {
+                this.departOptions = resp.data;
+            }
+        },
 
-            },
-            form: {
-
-            },
-            rules: {
-                username: [{
-                        required: true,
-                        message: '请输入用户名, 必须为字母数字下划线',
-                        pattern: /^[a-zA-Z0-9_]+$/,
-                        trigger: 'blur'
-                    },
-                    {
-                        min: 4,
-                        max: 20,
-                        message: '长度在 4 到 20 个字符',
-                        trigger: 'blur'
-                    }
-                ],
-                nickname: [{
-                    required: true,
-                    message: '请输入昵称',
-                    trigger: 'blur'
-                }]
-            },
-            totalCount: 0,
-            totalPage: 0,
-            pageNo: 1,
-            pageSize: 15,
-            tableData: [],
-            statusOptions: [{
-                    label: '正常',
-                    value: 0
-                },
-                {
-                    label: '停用',
-                    value: 1
-                }
-            ],
-            sexOptions: [{
-                    label: '男',
-                    value: 1
-                },
-                {
-                    label: '女',
-                    value: 2
-                }
-            ]
-        }
     },
     mounted() {
         this.pageNo = 1;
+        this.refreshTreeSelect();
         this.loadingData()
         this.loading = false;
     }

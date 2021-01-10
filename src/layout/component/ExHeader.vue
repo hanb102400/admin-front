@@ -13,15 +13,15 @@
                                 系统配置
                             </router-link>
                         </li>
-                         <li class="nav-item active">
+                        <li class="nav-item active">
                             <router-link to="/component">
                                 常用组件
                             </router-link>
                         </li>
                         <li class="nav-item">
-                              <a @click="logout">
+                            <a @click="logout">
                                 登出
-                              </a>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -36,20 +36,25 @@ module.exports = {
     data() {
         return {}
     },
-    methods:{
-        async logout(){
-             const resp = await Net.post('/logout');
-             if(resp.code==0) {
+    methods: {
+        async logout() {
+            const resp = await Net.post('/logout/cas');
+            if (resp.code == 0) {
+                if (resp.logoutUrl) {
+                    window.document.location = resp.logoutUrl;
+                } else {
                     this.$router.push({
                         path: "/login",
                     });
-             }
-             
+                }
+
+            }
+
         }
     },
-     mounted() {
-       
+    mounted() {
+
     }
-    
+
 }
 </script>
