@@ -55,10 +55,10 @@ axios.interceptors.response.use(
                     if (error.response.data.loginUrl) {
                         window.document.location = error.response.data.loginUrl;
                     } else {
-                        //跳转登录
-                        //router.push({
-                        //    path: "/login",
-                        //});
+
+                        router.push({
+                            path: "/login",
+                        });
                     };
                     break;
                 case 403:
